@@ -1,7 +1,6 @@
-# Smart Crop Advisory System — README
+# Smart Crop Advisory System — Kisan Mitra 🌾
 
-## 🌾 About
-AI-powered platform for small & marginal farmers in India. Provides multilingual, voice-enabled crop advisory, pest detection, and live market prices.
+An AI-powered digital ecosystem designed to empower small and marginal farmers in India with data-driven insights, machine learning predictions, and an AI-powered assistant.
 
 ---
 
@@ -9,94 +8,84 @@ AI-powered platform for small & marginal farmers in India. Provides multilingual
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | React Native (Expo) |
-| **Backend** | FastAPI (Python) — Microservices |
-| **ML (Crop)** | Scikit-learn (Random Forest) |
-| **ML (Pest)** | PyTorch (MobileNet CNN) |
-| **Database** | PostgreSQL + Redis |
-| **DevOps** | Docker Compose |
+| **Frontend** | **Next.js 15 (React)**, Tailwind CSS, Zustand, Lucide React |
+| **Backend** | **FastAPI (Python)** — Microservices Architecture |
+| **Authentication** | **Auth.js (NextAuth)** with Google & Credentials Support |
+| **ML/AI Intelligence** | **Gemini AI** (Chat), Scikit-learn (Crop/Yield), PyTorch (Pest) |
+| **Database** | **PostgreSQL** (Managed via Prisma ORM) |
+| **State Management** | **Zustand** (Frontend UI State) |
 
 ---
 
-## 📁 Project Structure
+## 📁 System Architecture
 
-```
+```text
 smart-crop-advisory/
 ├── backend/
-│   ├── auth-service/       # JWT Auth (port 8001)
-│   ├── advisory-service/   # Crop ML (port 8002)
-│   ├── pest-service/       # Pest CNN (port 8003)
-│   ├── data-service/       # Weather & Market (port 8004)
-│   └── common/             # Shared utilities
-├── frontend/               # React Native App
-│   ├── src/
-│   │   ├── screens/        # Home, CropAdvisor, PestAnalyzer, MarketPrices, Settings
-│   │   ├── navigation/     # Bottom Tab Navigator
-│   │   ├── store/          # Zustand state
-│   │   ├── services/       # API clients
-│   │   └── constants/      # Theme, translations
-│   └── App.js
-└── docker-compose.yml
+│   ├── advisory-service/   # Crop & Yield ML (port 8002)
+│   ├── pest-service/       # Pest Detection CNN (port 8003)
+│   ├── data-service/       # Weather & Market Data (port 8004)
+│   ├── chatbot-service/    # Gemini AI Assistant (port 8005)
+│   └── common/             # Shared security & utilities
+├── web/                    # Next.js Web Application
+│   ├── src/app/            # Profile, Dashboard, Advisor, etc.
+│   ├── src/components/     # UI Components (ChatBot, Navbar)
+│   └── prisma/             # Database Schema
+└── research/               # Jupyter Notebooks & ML Training data
 ```
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Development Setup
 
-### 1. Copy environment file
+### 1. Root Configuration
+Copy the environment template and fill in your API keys (OpenWeather, Google Client ID, Gemini).
 ```bash
 cp .env.example .env
-# Fill in your OPENWEATHER_API_KEY
 ```
 
-### 2. Start Backend Services (Docker)
+### 2. Database Setup
 ```bash
-docker-compose up --build
+cd web
+npm install
+npx prisma db push
 ```
 
-Services available at:
-- Auth: http://localhost:8001/docs
-- Advisory: http://localhost:8002/docs  
-- Pest: http://localhost:8003/docs
-- Market/Weather: http://localhost:8004/docs
+### 3. Start Backend Services
+Launch each microservice in its own terminal:
+```bash
+# Advisory Service (Port 8002)
+cd backend/advisory-service && uvicorn app.main:app --port 8002 --reload
 
-### 3. Start Frontend
+# Chatbot Service (Port 8005)
+cd backend/chatbot-service && uvicorn app.main:app --port 8005 --reload
 
-#### 🌐 Website (Next.js)
+# (Repeat for pest-service:8003 and data-service:8004)
+```
+
+### 4. Start Next.js Frontend
 ```bash
 cd web
 npm run dev
 # Open http://localhost:3000
 ```
 
-#### 📱 Mobile App (React Native)
-```bash
-cd frontend
-npm start
-# Scan QR code with Expo Go app
-```
+---
+
+## 🌟 Key Features
+
+- 🌱 **Smart Crop Advisor** — Instant soil-based ML recommendations (N-P-K-pH).
+- 📈 **Yield Predictor** — Predict harvest output based on environmental factors.
+- 🐛 **Pest Analyzer** — Upload leaf images for AI-powered disease diagnosis.
+- 🌦 **Live Weather** — Hyper-local weather updates for the farmer's village.
+- 👨‍🌾 **Farmer Profiles** — Personalized storage for farm size, location, and history.
+- 🤖 **AI Assistant** — Floating chatbot powered by Gemini for any farming query.
+- 🔐 **Secure Access** — Industry-standard Auth with Google Social Login.
 
 ---
 
-## 🌍 Supported Languages
-- English
-- हिंदी (Hindi)
-- मराठी (Marathi)
-- తెలుగు (Telugu)
-- தமிழ் (Tamil)
+## 🎯 Our Mission
+To bridge the digital divide for **86% of India's small farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
 
 ---
-
-## 📊 Features
-- 🌱 **Crop Recommendation** — NPK/pH/Soil based ML suggestions
-- 🐛 **Pest Detection** — CNN model via camera/gallery image
-- 🌦 **Weather Alerts** — OpenWeatherMap integration
-- 💰 **Market Prices** — Live mandi prices (eNAM / APMC)
-- 🎙 **Voice Support** — Whisper STT in local languages
-
----
-
-## 🎯 Impact
-- 20–30% potential yield increase via data-driven decisions
-- 15–25% reduction in input costs
-- Digital inclusion for 86% of India's small farmers (NABARD, 2022)
+*Created with ❤️ for the Indian Farming Community.*
