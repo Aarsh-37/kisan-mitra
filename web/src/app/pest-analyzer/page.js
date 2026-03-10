@@ -1,0 +1,150 @@
+"use client";
+import Navbar from "@/layout/Navbar";
+import useAppStore from "@/store/useAppStore";
+import { useState } from "react";
+import { Bug, Upload, Search, RefreshCcw, ShieldCheck, AlertCircle } from "lucide-react";
+
+export default function PestAnalyzer() {
+    const t = useAppStore((s) => s.t);
+    const [loading, setLoading] = useState(false);
+    const [image, setImage] = useState(null);
+    const [result, setResult] = useState(null);
+
+    const handleUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setImage(URL.createObjectURL(file));
+        setLoading(true);
+        setResult(null);
+
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await fetch("http://localhost:8003/detect", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error("Backend unreachable");
+
+            const data = await response.json();
+
+            // Map backend response to UI structure
+            setResult({
+                disease: data.diagnosis === "Healthy" ? "No disease" : data.diagnosis,
+                confidence: `${Math.round(data.confidence * 100)}%`,
+                description: data.diagnosis === "Healthy"
+                    ? "Your crop appears to be in excellent health. No significant pest or disease signs detected."
+                    : `Analysis suggests the presence of ${data.diagnosis}.`,
+                symptoms: data.diagnosis === "Healthy" ? ["None"] : ["Visible spots", "Discoloration"],
+                treatment: data.treatment
+            });
+        } catch (error) {
+            console.error("Pest analysis failed, using fallback mock:", error);
+            // Fallback for demo if backend is down
+            setTimeout(() => {
+                setResult({
+                    disease: "Early Blight (Demo Mode)",
+                    confidence: "88%",
+                    description: "Early Blight is a common fungal disease caused by Alternaria solani. It affects leaves, stems, and fruits.",
+                    symptoms: ["Dark spots with concentric rings", "Yellowing around spots", "Premature leaf drop"],
+                    treatment: "Apply Mancozeb or Copper-based fungicides. Improve air circulation and avoid overhead watering."
+                });
+                setLoading(false);
+            }, 1500);
+            return;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <main className="min-h-screen bg-background">
+            <Navbar />
+            <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="p-3 bg-red-500/10 rounded-xl">
+                        <Bug className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h1 className="text-3xl font-black text-text">{t('pestAnalyzer')}</h1>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Upload Area */}
+                    <div className="space-y-6">
+                        <div className="bg-surface rounded-2xl border-2 border-dashed border-surface-light p-8 text-center relative hover:border-primary/50 transition-colors group">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={handleUpload}
+                            />
+                            {image ? (
+                                <img src={image} alt="Upload" className="w-full h-64 object-cover rounded-xl mb-4" />
+                            ) : (
+                                <div className="py-12">
+                                    <div className="w-16 h-16 bg-surface-light rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                        <Upload className="w-8 h-8 text-text-secondary" />
+                                    </div>
+                                    <p className="text-text font-bold mb-1">{t('uploadImage')}</p>
+                                    <p className="text-sm text-text-secondary">PNG, JPG up to 10MB</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <button className="w-full bg-surface border border-surface-light hover:bg-surface-light text-text font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <Search className="w-5 h-5" />
+                            {t('search')}
+                        </button>
+                    </div>
+
+                    {/* Analysis Area */}
+                    <div className="flex flex-col">
+                        {loading ? (
+                            <div className="bg-surface p-12 rounded-2xl border border-surface-light flex-1 flex flex-col items-center justify-center text-center">
+                                <RefreshCcw className="w-12 h-12 text-primary animate-spin mb-6" />
+                                <h3 className="text-xl font-bold text-text mb-2">{t('analyzing')}</h3>
+                                <p className="text-sm text-text-secondary">Our CNN model is processing the image...</p>
+                            </div>
+                        ) : result ? (
+                            <div className="bg-surface p-8 rounded-2xl border border-red-500/30 flex-1 animate-in zoom-in-95 duration-300">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="px-3 py-1 bg-red-500/20 text-red-500 text-xs font-bold rounded-full uppercase">Detected</span>
+                                    <span className="text-text-secondary text-xs">{result.confidence} Confidence</span>
+                                </div>
+                                <h2 className="text-4xl font-black text-red-500 mb-4">{result.disease}</h2>
+                                <p className="text-text-secondary text-sm leading-relaxed mb-6">{result.description}</p>
+
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-surface-light rounded-xl border border-surface-light">
+                                        <h4 className="text-sm font-bold text-text mb-2 flex items-center gap-2 uppercase tracking-wider">
+                                            <AlertCircle className="w-4 h-4 text-orange-500" /> Symptoms
+                                        </h4>
+                                        <ul className="text-xs text-text-secondary space-y-1">
+                                            {result.symptoms.map(s => <li key={s} className="flex items-center gap-2">• {s}</li>)}
+                                        </ul>
+                                    </div>
+                                    <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
+                                        <h4 className="text-sm font-bold text-primary mb-2 flex items-center gap-2 uppercase tracking-wider">
+                                            <ShieldCheck className="w-4 h-4" /> Recommended Treatment
+                                        </h4>
+                                        <p className="text-xs text-text-secondary leading-relaxed">
+                                            {result.treatment}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-surface p-8 rounded-2xl border border-surface-light border-dashed flex-1 flex flex-col items-center justify-center text-center opacity-50">
+                                <Bug className="w-12 h-12 text-text-secondary/20 mb-4" />
+                                <p className="text-sm text-text-secondary">Upload an image to start analysis</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </main>
+    );
+}
