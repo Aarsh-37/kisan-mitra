@@ -32,13 +32,26 @@ export default function PestAnalyzer() {
             const data = await response.json();
 
             // Map backend response to UI structure
+            const pestInfo = {
+                "aphids": { desc: "Small sap-sucking insects that can cause leaf curling and transmit viruses.", symptoms: ["Curled leaves", "Sticky honeydew", "Stunted growth"] },
+                "armyworm": { desc: "Larvae that feed in large groups, skeletonizing leaves and consuming entire plants.", symptoms: ["Ragged holes in leaves", "Groups of caterpillars", "Defoliation"] },
+                "beetle": { desc: "Chewing pests that damage leaves, flowers, and stems of various crops.", symptoms: ["Holes in leaves", "Damaged flowers", "Visible beetles"] },
+                "bollworm": { desc: "A major pest that bores into cotton bolls and other fruiting bodies.", symptoms: ["Holes in fruit/bolls", "Internal tissue damage", "Dropping of bolls"] },
+                "grasshopper": { desc: "Powerful jumpers that consume large amounts of foliage rapidly.", symptoms: ["Large irregular holes in leaves", "Missing plant parts", "Visible swarms"] },
+                "mites": { desc: "Tiny arachnids that cause speckling and webbing on the undersides of leaves.", symptoms: ["Yellow speckling", "Fine silk webbing", "Bronzing of leaves"] },
+                "mosquito": { desc: "While not a crop pest, their presence indicates standing water which may affect crops.", symptoms: ["Standing water nearby", "Visible swarming"] },
+                "sawfly": { desc: "Larvae resemble caterpillars and can quickly defoliate specific host plants.", symptoms: ["Skeletonized leaves", "Rolled leaves", "Waxy secretions"] },
+                "stem_borer": { desc: "Pests that tunnel into stems, disrupting nutrient flow and causing 'dead hearts'.", symptoms: ["Holes in stems", "Wilted central leaves", "Weakened stalks"] },
+                "Healthy": { desc: "Your crop appears to be in excellent health. No significant pest or disease signs detected.", symptoms: ["None"] }
+            };
+
+            const info = pestInfo[data.diagnosis] || { desc: `Analysis suggests the presence of ${data.diagnosis}.`, symptoms: ["Visible spots", "Discoloration"] };
+
             setResult({
-                disease: data.diagnosis === "Healthy" ? "No disease" : data.diagnosis,
+                disease: data.diagnosis,
                 confidence: `${Math.round(data.confidence * 100)}%`,
-                description: data.diagnosis === "Healthy"
-                    ? "Your crop appears to be in excellent health. No significant pest or disease signs detected."
-                    : `Analysis suggests the presence of ${data.diagnosis}.`,
-                symptoms: data.diagnosis === "Healthy" ? ["None"] : ["Visible spots", "Discoloration"],
+                description: info.desc,
+                symptoms: info.symptoms,
                 treatment: data.treatment
             });
         } catch (error) {
@@ -106,7 +119,7 @@ export default function PestAnalyzer() {
                             <div className="bg-surface p-12 rounded-2xl border border-surface-light flex-1 flex flex-col items-center justify-center text-center">
                                 <RefreshCcw className="w-12 h-12 text-primary animate-spin mb-6" />
                                 <h3 className="text-xl font-bold text-text mb-2">{t('analyzing')}</h3>
-                                <p className="text-sm text-text-secondary">Our CNN model is processing the image...</p>
+                                <p className="text-sm text-text-secondary">Our AI model is processing the image...</p>
                             </div>
                         ) : result ? (
                             <div className="bg-surface p-8 rounded-2xl border border-red-500/30 flex-1 animate-in zoom-in-95 duration-300">

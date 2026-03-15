@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # Gemini Configuration
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 model = None
 
 if GEMINI_API_KEY:
