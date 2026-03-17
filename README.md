@@ -69,7 +69,7 @@ npm run dev
 ---
 
 ## 🎯 Our Mission
-To bridge the digital divide for **86% of India's small farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
+To bridge the digital divide for **India's farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
 
 ---
 *Created with ❤️ for the Indian Farming Community.*
