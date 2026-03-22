@@ -1,7 +1,6 @@
 databases:
   - name: smart-crop-postgres
     databaseName: smart_crop
-    user: postgres
     plan: free
 
 services:
