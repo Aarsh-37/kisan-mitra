@@ -7,36 +7,36 @@ services:
   - type: web
     name: advisory-service
     env: docker
-    dockerContext: .
-    dockerfilePath: ./backend/advisory-service/Dockerfile
+    dockerContext: ./backend/advisory-service
+    dockerfilePath: ./Dockerfile
     plan: free
 
   - type: web
     name: pest-service
     env: docker
-    dockerContext: .
-    dockerfilePath: ./backend/pest-service/Dockerfile
+    dockerContext: ./backend/pest-service
+    dockerfilePath: ./Dockerfile
     plan: free
     
   - type: web
     name: data-service
     env: docker
-    dockerContext: .
-    dockerfilePath: ./backend/data-service/Dockerfile
+    dockerContext: ./backend/data-service
+    dockerfilePath: ./Dockerfile
     plan: free
     
   - type: web
     name: chatbot-service
     env: docker
-    dockerContext: .
-    dockerfilePath: ./backend/chatbot-service/Dockerfile
+    dockerContext: ./backend/chatbot-service
+    dockerfilePath: ./Dockerfile
     plan: free
     
   - type: web
     name: api-gateway
     env: docker
-    dockerContext: .
-    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    dockerfilePath: ./Dockerfile
     plan: free
     envVars:
       - key: ADVISORY_URL
@@ -51,8 +51,8 @@ services:
   - type: web
     name: web-frontend
     env: docker
-    dockerContext: .
-    dockerfilePath: ./web/Dockerfile
+    dockerContext: ./web
+    dockerfilePath: ./Dockerfile
     plan: free
     envVars:
       - key: NEXT_PUBLIC_API_URL
