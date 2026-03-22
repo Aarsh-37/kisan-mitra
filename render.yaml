@@ -1,0 +1,64 @@
+databases:
+  - name: smart-crop-postgres
+    databaseName: smart_crop
+    user: postgres
+    plan: free
+
+services:
+  - type: web
+    name: advisory-service
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./backend/advisory-service/Dockerfile
+    plan: free
+
+  - type: web
+    name: pest-service
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./backend/pest-service/Dockerfile
+    plan: free
+    
+  - type: web
+    name: data-service
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./backend/data-service/Dockerfile
+    plan: free
+    
+  - type: web
+    name: chatbot-service
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./backend/chatbot-service/Dockerfile
+    plan: free
+    
+  - type: web
+    name: api-gateway
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    envVars:
+      - key: ADVISORY_URL
+        value: https://advisory-service.onrender.com
+      - key: PEST_URL
+        value: https://pest-service.onrender.com
+      - key: DATA_URL
+        value: https://data-service.onrender.com
+      - key: CHAT_URL
+        value: https://chatbot-service.onrender.com
+
+  - type: web
+    name: web-frontend
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./web/Dockerfile
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://api-gateway.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-crop-postgres
+          property: connectionString
