@@ -18,6 +18,7 @@ An AI-powered digital ecosystem designed to empower small and marginal farmers i
 ---
 
 ## 📁 System Architecture
+See the [Production Roadmap](ROADMAP.md) for planned enhancements.
 
 ```text
 smart-crop-advisory/

@@ -1,0 +1,92 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart-crop-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: boult@123
+      POSTGRES_DB: smart_crop
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smart_crop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  advisory-service:
+    build: ./backend/advisory-service
+    container_name: smart-crop-advisory
+    restart: on-failure
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+
+  pest-service:
+    build: ./backend/pest-service
+    container_name: smart-crop-pest
+    restart: on-failure
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+
+  data-service:
+    build: ./backend/data-service
+    container_name: smart-crop-data
+    restart: on-failure
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+
+  chatbot-service:
+    build: ./backend/chatbot-service
+    container_name: smart-crop-chatbot
+    restart: on-failure
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+
+  api-gateway:
+    build: ./backend
+    container_name: smart-crop-gateway
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - ADVISORY_URL=http://advisory-service:8002
+      - PEST_URL=http://pest-service:8003
+      - DATA_URL=http://data-service:8004
+      - CHAT_URL=http://chatbot-service:8005
+      - ALLOWED_ORIGIN=http://localhost:3000
+      - NODE_ENV=production
+    depends_on:
+      - advisory-service
+      - pest-service
+      - data-service
+      - chatbot-service
+
+  web-frontend:
+    build: ./web
+    container_name: smart-crop-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - DATABASE_URL=postgresql://postgres:boult@123@postgres:5432/smart_crop
+    depends_on:
+      api-gateway:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

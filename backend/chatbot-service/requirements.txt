@@ -3,4 +3,3 @@ uvicorn
 google-generativeai
 python-dotenv
 pydantic
-翻,Complexity:1,Description:
