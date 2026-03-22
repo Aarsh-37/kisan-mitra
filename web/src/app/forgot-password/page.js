@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
                     </div>
                     <h3 className="text-xl font-black text-text mb-3">Check your inbox</h3>
                     <p className="text-text-secondary leading-relaxed mb-8">
-                        If an account exists for <strong>{email}</strong>, we've sent a password reset link. Please check your spam folder too.
+                        If an account exists for <strong>{email}</strong>, we&apos;ve sent a password reset link. Please check your spam folder too.
                     </p>
                     <Link
                         href="/login"

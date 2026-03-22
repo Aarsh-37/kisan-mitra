@@ -150,7 +150,7 @@ export default function LandingPage() {
 
                         <div className="w-full lg:w-1/2">
                             <h2 className="text-sm font-black text-primary uppercase tracking-wider mb-2">Why Choose Us</h2>
-                            <h3 className="text-3xl md:text-4xl font-black text-text mb-6 leading-tight">We're Top Agriculture & Organic Enterprises</h3>
+                            <h3 className="text-3xl md:text-4xl font-black text-text mb-6 leading-tight">We&apos;re Top Agriculture &amp; Organic Enterprises</h3>
                             <p className="text-text-secondary mb-8 text-lg leading-relaxed">
                                 Our platform bridges the gap between traditional farming and modern technology, ensuring sustainable growth and better yields for every farmer.
                             </p>
