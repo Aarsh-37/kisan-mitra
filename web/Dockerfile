@@ -30,6 +30,7 @@ COPY --from=builder /app/prisma ./prisma
 
 # Copy and prepare startup script
 COPY entrypoint.sh ./entrypoint.sh
+RUN sed -i 's/\r$//' ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 # Next.js standalone server listens on port 3000
