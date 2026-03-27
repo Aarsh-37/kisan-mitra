@@ -17,25 +17,6 @@ An AI-powered digital ecosystem designed to empower small and marginal farmers i
 
 ---
 
-## 📁 System Architecture
-See the [Production Roadmap](ROADMAP.md) for planned enhancements.
-
-```text
-smart-crop-advisory/
-├── backend/
-│   ├── advisory-service/   # Crop & Yield ML (port 8002)
-│   ├── pest-service/       # Pest Detection CNN (port 8003)
-│   ├── data-service/       # Weather & Market Data (port 8004)
-│   ├── chatbot-service/    # Gemini AI Assistant (port 8005)
-│   └── common/             # Shared security & utilities
-├── web/                    # Next.js Web Application
-│   ├── src/app/            # Profile, Dashboard, Advisor, etc.
-│   ├── src/components/     # UI Components (ChatBot, Navbar)
-│   └── prisma/             # Database Schema
-└── research/               # Jupyter Notebooks & ML Training data
-```
-
----
 
 ## ⚙️ Development Setup
 
@@ -86,7 +67,7 @@ npm run dev
 ---
 
 ## 🎯 Our Mission
-To bridge the digital divide for **86% of India's small farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
+To bridge the digital divide for **India's small farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
 
 ---
 *Created with ❤️ for the Indian Farming Community.*
