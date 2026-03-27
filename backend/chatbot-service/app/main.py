@@ -1,16 +1,18 @@
 import os
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import google.generativeai as genai
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv(find_dotenv())
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Smart Crop AI Chatbot Service")
 
-# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,23 +21,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Gemini Configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 model = None
 
 if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        print("✅ Gemini AI initialized successfully")
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        logger.info("Gemini AI initialized successfully.")
     except Exception as e:
-        print(f"❌ Failed to initialize Gemini: {e}")
+        logger.error(f"Failed to initialize Gemini: {e}")
 else:
-    print("⚠️ GEMINI_API_KEY not found. Running in DEMO mode.")
+    logger.warning("GEMINI_API_KEY not found. Running in demo mode.")
 
 class ChatRequest(BaseModel):
     message: str
-    history: list = []
 
 @app.get("/health")
 async def health_check():
@@ -47,26 +47,24 @@ async def health_check():
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
-    if not request.message:
-        raise HTTPException(status_code=400, detail="Message cannot be empty")
+    message = request.message.strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="Message cannot be empty.")
 
     if not model:
-        # Demo mode response
         return {
-            "response": f"Hi! This is the Farmer Assistant (DEMO MODE). You asked: '{request.message}'. To get real AI answers, please add a GEMINI_API_KEY to your .env file.",
+            "response": f"Demo Mode: You asked '{message}'. Please configure GEMINI_API_KEY for real responses.",
             "mode": "demo"
         }
 
     try:
-        # Construct context for the farmer
         system_instruction = (
-            "You are a helpful and knowledgeable agricultural expert assistant for the 'Smart Crop Advisory System'. "
-            "Your goal is to help farmers with questions about crops, pests, soil, organic farming, and market prices. "
-            "Keep your answers concise, practical, and supportive. Use simple language that a farmer can understand."
+            "You are a professional agricultural expert assistant for the Smart Crop Advisory System. "
+            "Help farmers with questions about crops, pests, soil, organic farming, and market prices. "
+            "Provide concise, practical, and supportive answers in clear, accessible language."
         )
         
-        # Simple completion for now (can be expanded to full chat sessions later)
-        prompt = f"{system_instruction}\n\nUser Question: {request.message}"
+        prompt = f"{system_instruction}\n\nUser Question: {message}"
         response = model.generate_content(prompt)
         
         return {
@@ -74,11 +72,8 @@ async def chat(request: ChatRequest):
             "mode": "production"
         }
     except Exception as e:
-        print(f"Chat error: {e}")
-        return {
-            "response": "I'm sorry, I'm having trouble connecting to my AI brain right now. Please try again later.",
-            "mode": "error"
-        }
+        logger.error(f"Chat error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate AI response. Please try again later.")
 
 if __name__ == "__main__":
     import uvicorn
