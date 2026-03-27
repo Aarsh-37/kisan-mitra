@@ -1,72 +1,89 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import pickle
-import numpy as np
-from dotenv import load_dotenv, find_dotenv
+import logging
+import pandas as pd
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 
-load_dotenv(find_dotenv())
+load_dotenv()
 
-app = FastAPI(title="Smart Crop Advisory Service")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
-# Allow requests from the frontend
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
+
+ml_models = {}
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if os.path.exists(MODEL_PATH):
+        try:
+            with open(MODEL_PATH, "rb") as f:
+                ml_models["crop_model"] = pickle.load(f)
+            logger.info("Advisory ML model loaded successfully.")
+        except Exception as e:
+            logger.error(f"Failed to load ML model: {e}")
+    else:
+        logger.warning(f"Model file not found at {MODEL_PATH}")
+    
+    yield
+    ml_models.clear()
+    logger.info("Service shutting down.")
+
+app = FastAPI(title="Smart Crop Advisory Service", lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific frontend origin(s)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load the trained model
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
-
-model = None
-
-@app.on_event("startup")
-async def load_model():
-    global model
-    if os.path.exists(MODEL_PATH):
-        with open(MODEL_PATH, "rb") as f:
-            model = pickle.load(f)
-        print("Model loaded successfully.")
-    else:
-        print(f"Warning: Model file not found at {MODEL_PATH}")
+class CropRequest(BaseModel):
+    N: float = Field(default=0.0, description="Nitrogen content in soil")
+    P: float = Field(default=0.0, description="Phosphorous content in soil")
+    K: float = Field(default=0.0, description="Potassium content in soil")
+    temperature: float = Field(default=0.0, description="Temperature in Celsius")
+    humidity: float = Field(default=0.0, description="Relative humidity in percentage")
+    ph: float = Field(default=0.0, description="pH value of the soil")
+    rainfall: float = Field(default=0.0, description="Rainfall in mm")
 
 @app.post("/recommend")
-async def recommend_crop(data: dict):
+async def recommend_crop(request: CropRequest):
+    model = ml_models.get("crop_model")
     if model is None:
-        raise HTTPException(status_code=503, detail="Model is not loaded or available.")
+        raise HTTPException(status_code=503, detail="Model is currently unavailable.")
     
     try:
-        # Extract features (N, P, K, temperature, humidity, ph, rainfall)
-        # Default to 0 if a feature is missing
-        n = float(data.get("N", 0))
-        p = float(data.get("P", 0))
-        k = float(data.get("K", 0))
-        temp = float(data.get("temperature", 0))
-        humidity = float(data.get("humidity", 0))
-        ph = float(data.get("ph", 0))
-        rainfall = float(data.get("rainfall", 0))
+        features = pd.DataFrame(
+            [[request.N, request.P, request.K, request.temperature, request.humidity, request.ph, request.rainfall]], 
+            columns=['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']
+        )
         
-        # Prepare feature object for prediction
-        # Use pandas DataFrame to avoid sklearn feature names warning
-        import pandas as pd
-        features = pd.DataFrame([[n, p, k, temp, humidity, ph, rainfall]], 
-                                columns=['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall'])
-        
-        # Predict using the loaded model
         prediction = model.predict(features)
-        recommended_crop = prediction[0]
+        recommended_crop = str(prediction[0])
         
         return {
             "recommendations": [recommended_crop],
-            "advice": f"Based on your soil and weather conditions, we recommend planting {recommended_crop}."
+            "advice": f"Based on your soil parameters and weather conditions, we recommend cultivating {recommended_crop}."
         }
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.error(f"Prediction error: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred during crop prediction.")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "advisory-service", "model_loaded": model is not None}
+    return {
+        "status": "Healthy",
+        "service": "advisory-service",
+        "model_loaded": "crop_model" in ml_models
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8002)
