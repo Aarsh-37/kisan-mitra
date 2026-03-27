@@ -1,4 +1,4 @@
-# Smart Crop Advisory System — Kisan Mitra 🌾
+# Kisan Mitra 🌾 - A Smart Crop Advisory System 
 
 An AI-powered digital ecosystem designed to empower small and marginal farmers in India with data-driven insights, machine learning predictions, and an AI-powered assistant.
 
