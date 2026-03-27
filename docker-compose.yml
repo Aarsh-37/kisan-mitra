@@ -19,6 +19,7 @@ services:
       start_period: 10s
 
   advisory-service:
+    image: smartcropadvisorysystem-advisory-service
     build: ./backend/advisory-service
     container_name: smart-crop-advisory
     restart: on-failure
@@ -28,6 +29,7 @@ services:
       - .env
 
   pest-service:
+    image: smartcropadvisorysystem-pest-service
     build: ./backend/pest-service
     container_name: smart-crop-pest
     restart: on-failure
@@ -37,6 +39,7 @@ services:
       - .env
 
   data-service:
+    image: smartcropadvisorysystem-data-service
     build: ./backend/data-service
     container_name: smart-crop-data
     restart: on-failure
@@ -46,6 +49,7 @@ services:
       - .env
 
   chatbot-service:
+    image: smartcropadvisorysystem-chatbot-service
     build: ./backend/chatbot-service
     container_name: smart-crop-chatbot
     restart: on-failure
@@ -55,6 +59,7 @@ services:
       - .env
 
   api-gateway:
+    image: smartcropadvisorysystem-api-gateway
     build: ./backend
     container_name: smart-crop-gateway
     restart: always
@@ -74,6 +79,7 @@ services:
       - chatbot-service
 
   web-frontend:
+    image: smartcropadvisorysystem-web-frontend
     build: ./web
     container_name: smart-crop-web
     restart: always
