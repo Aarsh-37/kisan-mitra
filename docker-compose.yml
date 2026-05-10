@@ -88,6 +88,16 @@ services:
     env_file:
       - .env
 
+  user-service:
+    image: smartcropadvisorysystem-user-service
+    build: ./backend/user-service
+    container_name: smart-crop-user
+    restart: on-failure
+    ports:
+      - "8009:8009"
+    env_file:
+      - .env
+
   api-gateway:
     image: smartcropadvisorysystem-api-gateway
     build: ./backend
@@ -103,6 +113,7 @@ services:
       - MARKET_URL=http://market-service:8006
       - NOTIFICATION_URL=http://notification-service:8007
       - ANALYTICS_URL=http://analytics-service:8008
+      - USER_URL=http://user-service:8009
       - ALLOWED_ORIGIN=http://localhost:3000
       - NODE_ENV=production
     depends_on:
@@ -113,6 +124,7 @@ services:
       - market-service
       - notification-service
       - analytics-service
+      - user-service
 
   web-frontend:
     image: smartcropadvisorysystem-web-frontend

@@ -57,7 +57,8 @@ const services = {
   chat:     process.env.CHAT_URL     || 'http://127.0.0.1:8005',
   market:   process.env.MARKET_URL   || 'http://127.0.0.1:8006',
   notification: process.env.NOTIFICATION_URL || 'http://127.0.0.1:8007',
-  analytics:    process.env.ANALYTICS_URL    || 'http://127.0.0.1:8008'
+  analytics:    process.env.ANALYTICS_URL    || 'http://127.0.0.1:8008',
+  user:         process.env.USER_URL         || 'http://127.0.0.1:8009'
 };
 
 const proxyOptions = (target, prefix) => ({
@@ -78,6 +79,7 @@ app.use('/api/weather',  createProxyMiddleware(proxyOptions(services.weather, 'w
 app.use('/api/market',   createProxyMiddleware(proxyOptions(services.market, 'market')));
 app.use('/api/notification', createProxyMiddleware(proxyOptions(services.notification, 'notification')));
 app.use('/api/analytics',    createProxyMiddleware(proxyOptions(services.analytics, 'analytics')));
+app.use('/api/user',         createProxyMiddleware(proxyOptions(services.user, 'user')));
 
 // Heavy-use endpoints get the stricter rate limiter
 app.use('/api/pest', heavyLimiter, createProxyMiddleware(proxyOptions(services.pest, 'pest')));
