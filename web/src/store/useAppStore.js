@@ -81,6 +81,19 @@ const useAppStore = create((set, get) => ({
 
     pestResult: null,
     setPestResult: (result) => set({ pestResult: result }),
+
+    trackEvent: async (userId, eventType, metadata = {}) => {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        try {
+            await fetch(`${baseUrl}/api/analytics/log`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, event_type: eventType, metadata })
+            });
+        } catch (error) {
+            console.error("Analytics tracking failed:", error);
+        }
+    }
 }));
 
 export default useAppStore;

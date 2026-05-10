@@ -3,11 +3,14 @@ import Navbar from "@/layout/Navbar";
 import useAppStore from "@/store/useAppStore";
 import { useState } from "react";
 import { Leaf, Send, RefreshCcw } from "lucide-react";
+import { useSession } from "next-auth/react";
 // Import the generated pure JS machine learning model
 import { predictCrop } from "@/utils/cropModel";
 
 export default function CropAdvisor() {
+    const { data: session } = useSession();
     const t = useAppStore((s) => s.t);
+    const trackEvent = useAppStore((s) => s.trackEvent);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
 
@@ -50,6 +53,7 @@ export default function CropAdvisor() {
                 advice: `Based on your inputs, ${recommendedCrop} is recommended for planting.`,
                 fertilizer: "Apply NPK fertilizers as appropriate to growth stages."
             });
+            trackEvent(session?.user?.id || "anonymous", "CROP_PREDICTION", { crop: recommendedCrop });
         } catch (error) {
             console.error("Client side prediction failed: ", error);
             alert("Prediction engine error.");
