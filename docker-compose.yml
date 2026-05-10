@@ -38,10 +38,10 @@ services:
     env_file:
       - .env
 
-  data-service:
-    image: smartcropadvisorysystem-data-service
-    build: ./backend/data-service
-    container_name: smart-crop-data
+  weather-service:
+    image: smartcropadvisorysystem-weather-service
+    build: ./backend/weather-service
+    container_name: smart-crop-weather
     restart: on-failure
     ports:
       - "8004:8004"
@@ -68,14 +68,15 @@ services:
     environment:
       - ADVISORY_URL=http://advisory-service:8002
       - PEST_URL=http://pest-service:8003
-      - DATA_URL=http://data-service:8004
+      - WEATHER_URL=http://weather-service:8004
       - CHAT_URL=http://chatbot-service:8005
+      - MARKET_URL=http://market-service:8006
       - ALLOWED_ORIGIN=http://localhost:3000
       - NODE_ENV=production
     depends_on:
       - advisory-service
       - pest-service
-      - data-service
+      - weather-service
       - chatbot-service
 
   web-frontend:

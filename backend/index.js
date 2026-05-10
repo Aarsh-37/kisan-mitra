@@ -53,8 +53,9 @@ app.use((req, res, next) => {
 const services = {
   advisory: process.env.ADVISORY_URL || 'http://127.0.0.1:8002',
   pest:     process.env.PEST_URL     || 'http://127.0.0.1:8003',
-  data:     process.env.DATA_URL     || 'http://127.0.0.1:8004',
-  chat:     process.env.CHAT_URL     || 'http://127.0.0.1:8005'
+  weather:  process.env.WEATHER_URL  || 'http://127.0.0.1:8004',
+  chat:     process.env.CHAT_URL     || 'http://127.0.0.1:8005',
+  market:   process.env.MARKET_URL   || 'http://127.0.0.1:8006'
 };
 
 const proxyOptions = (target, prefix) => ({
@@ -71,7 +72,8 @@ const proxyOptions = (target, prefix) => ({
 
 // ─── Proxy Routes ─────────────────────────────────────────────────────────────
 app.use('/api/advisory', createProxyMiddleware(proxyOptions(services.advisory, 'advisory')));
-app.use('/api/data',     createProxyMiddleware(proxyOptions(services.data, 'data')));
+app.use('/api/weather',  createProxyMiddleware(proxyOptions(services.weather, 'weather')));
+app.use('/api/market',   createProxyMiddleware(proxyOptions(services.market, 'market')));
 
 // Heavy-use endpoints get the stricter rate limiter
 app.use('/api/pest', heavyLimiter, createProxyMiddleware(proxyOptions(services.pest, 'pest')));
@@ -99,7 +101,8 @@ app.listen(PORT, () => {
   console.log(`=========================================`);
   console.log(`- /api/advisory -> ${services.advisory}`);
   console.log(`- /api/pest     -> ${services.pest}`);
-  console.log(`- /api/data     -> ${services.data}`);
+  console.log(`- /api/weather  -> ${services.weather}`);
   console.log(`- /api/chat     -> ${services.chat}`);
+  console.log(`- /api/market   -> ${services.market}`);
   console.log(`=========================================`);
 });

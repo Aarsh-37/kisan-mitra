@@ -17,8 +17,8 @@ export default function Dashboard() {
             const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
             // Wait for both fetch requests simultaneously
             const [weatherRes, marketRes] = await Promise.all([
-                fetch(`${baseUrl}/api/data/weather/Nagpur`).then(res => res.ok ? res.json() : null).catch(() => null),
-                fetch(`${baseUrl}/api/data/market-prices/Wheat`).then(res => res.ok ? res.json() : null).catch(() => null)
+                fetch(`${baseUrl}/api/weather/weather/Nagpur`).then(res => res.ok ? res.json() : null).catch(() => null),
+                fetch(`${baseUrl}/api/market/market-prices/Wheat`).then(res => res.ok ? res.json() : null).catch(() => null)
             ]);
             setWeather(weatherRes);
             setMarketPrices(marketRes);
