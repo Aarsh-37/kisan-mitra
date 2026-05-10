@@ -58,6 +58,16 @@ services:
     env_file:
       - .env
 
+  market-service:
+    image: smartcropadvisorysystem-market-service
+    build: ./backend/market-service
+    container_name: smart-crop-market
+    restart: on-failure
+    ports:
+      - "8006:8006"
+    env_file:
+      - .env
+
   api-gateway:
     image: smartcropadvisorysystem-api-gateway
     build: ./backend
@@ -78,6 +88,7 @@ services:
       - pest-service
       - weather-service
       - chatbot-service
+      - market-service
 
   web-frontend:
     image: smartcropadvisorysystem-web-frontend
