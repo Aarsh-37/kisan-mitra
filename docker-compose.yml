@@ -68,6 +68,16 @@ services:
     env_file:
       - .env
 
+  notification-service:
+    image: smartcropadvisorysystem-notification-service
+    build: ./backend/notification-service
+    container_name: smart-crop-notification
+    restart: on-failure
+    ports:
+      - "8007:8007"
+    env_file:
+      - .env
+
   api-gateway:
     image: smartcropadvisorysystem-api-gateway
     build: ./backend
@@ -81,6 +91,7 @@ services:
       - WEATHER_URL=http://weather-service:8004
       - CHAT_URL=http://chatbot-service:8005
       - MARKET_URL=http://market-service:8006
+      - NOTIFICATION_URL=http://notification-service:8007
       - ALLOWED_ORIGIN=http://localhost:3000
       - NODE_ENV=production
     depends_on:
@@ -89,6 +100,7 @@ services:
       - weather-service
       - chatbot-service
       - market-service
+      - notification-service
 
   web-frontend:
     image: smartcropadvisorysystem-web-frontend
