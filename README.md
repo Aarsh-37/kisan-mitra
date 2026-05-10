@@ -66,6 +66,24 @@ npm run dev
 
 ---
 
+## 🔮 Future Scope & Modifications
+
+- **Multi-lingual Voice Navigation**: Integrating Speech-to-Text (e.g., Whisper AI) so farmers can use voice commands in regional languages (Hindi/Marathi/Tamil).
+- **Market Price Integration**: Live APIs connecting to government 'Mandis' (e.g., e-NAM) to show live crop profit margins.
+- **Progressive Web App (PWA)**: Allowing the web app to function perfectly offline on low-end Android mobile phones.
+
+## 📡 IoT Integration (Hardware Add-ons)
+You can completely automate this system to create a true **Smart Farm** by integrating simple IoT hardware nodes:
+
+1. **Hardware Nodes**: Deploy an **ESP32** or **Arduino** equipped with:
+   - **NPK & pH Sensors**: Buried in the soil to instantly read nutrient levels instead of manual typing.
+   - **Capacitive Soil Moisture Sensors**: To gauge live hydration levels.
+   - **DHT11/DHT22**: For live field temperature and humidity.
+2. **Automated Pipeline**: The ESP32 sends a JSON payload via an HTTP `POST` request to your FastAPI `data-service` every hour natively.
+3. **Automated Alerts**: The Backend can then trigger WhatsApp or SMS alerts (using Twilio/Gupshup) when soil moisture drops below critical levels, enabling automated smart irrigation!
+
+---
+
 ## 🎯 Our Mission
 To bridge the digital divide for **India's small farmers**, providing them with elite-level agricultural intelligence to increase yields by **20–30%** and reduce input costs.
 

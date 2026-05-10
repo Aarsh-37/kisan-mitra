@@ -8,6 +8,7 @@ export default function ThemeWrapper({ children }) {
 
   // Prevent hydration mismatch by only rendering ThemeProvider after mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

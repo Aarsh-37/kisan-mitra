@@ -22,7 +22,8 @@ export default function PestAnalyzer() {
             const formData = new FormData();
             formData.append('image', file);
 
-            const response = await fetch("http://localhost:8003/detect", {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+            const response = await fetch(`${baseUrl}/api/pest/detect`, {
                 method: "POST",
                 body: formData,
             });

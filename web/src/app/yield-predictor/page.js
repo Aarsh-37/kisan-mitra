@@ -6,7 +6,7 @@ import { TrendingUp, Send, RefreshCcw, Leaf, Info } from "lucide-react";
 // Import our newly compiled standalone regression model
 import { predictYield } from "@/utils/yieldModel";
 
-export default function MarketPrices() {
+export default function YieldPredictor() {
     const t = useAppStore((s) => s.t);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);

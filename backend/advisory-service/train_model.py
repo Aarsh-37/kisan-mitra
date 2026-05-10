@@ -10,7 +10,8 @@ def train():
     print("Loading data...")
     # Get absolute path for reliability
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(base_dir, 'Crop_recommendation.csv')
+    root_dir = os.path.dirname(os.path.dirname(base_dir))
+    data_path = os.path.join(root_dir, 'research', 'Crop_recommendation.csv')
     
     df = pd.read_csv(data_path)
     print(f"Dataset shape: {df.shape}")

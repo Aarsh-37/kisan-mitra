@@ -14,10 +14,11 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
             // Wait for both fetch requests simultaneously
             const [weatherRes, marketRes] = await Promise.all([
-                fetch("http://localhost:8004/weather/Nagpur").then(res => res.ok ? res.json() : null).catch(() => null),
-                fetch("http://localhost:8004/market-prices/Wheat").then(res => res.ok ? res.json() : null).catch(() => null)
+                fetch(`${baseUrl}/api/data/weather/Nagpur`).then(res => res.ok ? res.json() : null).catch(() => null),
+                fetch(`${baseUrl}/api/data/market-prices/Wheat`).then(res => res.ok ? res.json() : null).catch(() => null)
             ]);
             setWeather(weatherRes);
             setMarketPrices(marketRes);

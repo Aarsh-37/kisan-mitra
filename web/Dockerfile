@@ -17,6 +17,9 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Install system dependencies for Prisma
+RUN apk add --no-cache openssl libc6-compat
+
 # Install prisma CLI for migrations at runtime
 RUN npm install -g prisma
 
